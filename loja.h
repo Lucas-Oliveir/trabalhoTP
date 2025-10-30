@@ -3,7 +3,31 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+void print(const char* s) {
+    if (*s == '\0') return;
+    char* sexo = NULL;
+    int len = 0;
+    
+    const char* i = s;
+    while (*i != '\0') {
+        // realoca espaço (+2 = caractere novo + terminador)
+        char* tmp = realloc(sexo, len + 2);
+        if (!tmp) {
+            free(sexo);
+            perror("realloc");
+            return;
+        }
+        sexo = tmp;
 
+        sexo[len++] = *i++;
+        sexo[len] = '\0';
+
+        printf("%c", sexo[len - 1]);
+        fflush(stdout);
+        Sleep(40);
+    }
+    free(sexo);
+}
 
 void print(const char* s) {
     if (*s == '\0') return;
