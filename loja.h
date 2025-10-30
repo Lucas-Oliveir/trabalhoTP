@@ -196,7 +196,7 @@ void excluirProduto(loja *loj) {
         printf(RED"\nNão existe nenhum produto com este ID cadastrado!!\n"RESET);
         goto escolha;
     }
-
+    loj->produtos[ind].id=INT_MAX;
     while(ind<loj->quant-1)
     {
         loj->produtos[ind]=loj->produtos[ind+1];
@@ -219,53 +219,62 @@ void gotoxy(COORD pos)
 }
 
 void editarProduto(loja *loj) {
-    system("CLS");
-    printf(GREEN"+=====================================================================+\n");
-    printf("|"RED "  S U P E R M E R C A D O     G I R O"GREEN"                                |\n");
-    printf("+=====================================================================+\n"RESET);
-    printf(BLUE"==== Tela de Edição ====\n\n"RESET);
+    int continuar = 1;
 
-    inicio:
+    while (continuar) {
+        system("CLS");
+        printf(GREEN "+=====================================================================+\n");
+        printf("|" RED "  S U P E R M E R C A D O     G I R O" GREEN "                                |\n");
+        printf("+=====================================================================+\n" RESET);
+        printf(BLUE "==== Tela de Edição ====\n\n" RESET);
 
-    int ID;
-    printf(RED"Digite o ID do produto a ser editado: ");
-    scanf("%d",&ID);
+        int ID;
+        printf(RED "Digite o ID do produto a ser editado: " RESET);
+        scanf("%d", &ID);
+        getchar(); // limpa o '\n' deixado pelo scanf
 
-    int busc=busca(loj,ID);
+        int busc = busca(loj, ID);
+        if (busc == -1) {
+            printf(RED "\nNão existe nenhum produto com este ID cadastrado!!\n" RESET);
+        } else {
+            prod *p = &loj->produtos[busc];
+            printf(RED "\nVocê está editando o produto de ID %d!\n\n" RESET, ID);
 
-    if(busc == -1)
-    {
-        printf(RED"\nNão existe nenhum produto com este ID cadastrado!!\n"RESET);
-        goto escolha;
+            char buffer[100];
+
+            // Nome
+            printf(YELLOW "Nome do Produto [%s]: " RESET, p->nome);
+            fgets(buffer, sizeof(buffer), stdin);
+            if (buffer[0] != '\n') {
+                buffer[strcspn(buffer, "\n")] = 0; // remove \n
+                strcpy(p->nome, buffer);
+            }
+
+            // Preço
+            printf(YELLOW "Preço do Produto [%.2f]: " RESET, p->preco);
+            fgets(buffer, sizeof(buffer), stdin);
+            if (buffer[0] != '\n') {
+                p->preco = atof(buffer);
+            }
+
+            // Quantidade
+            printf(YELLOW "Quantidade disponível do Produto [%d]: " RESET, p->quantidade);
+            fgets(buffer, sizeof(buffer), stdin);
+            if (buffer[0] != '\n') {
+                p->quantidade = atoi(buffer);
+            }
+
+            printf(GREEN "\nProduto editado com sucesso!\n\n" RESET);
+        }
+
+        char opc;
+        printf(YELLOW "Deseja editar outro produto? (s/n): " RESET);
+        scanf(" %c", &opc);
+        getchar(); // limpa o '\n'
+        if (opc != 's' && opc != 'S') {
+            continuar = 0;
+        }
     }
-
-    prod * p=&loj->produtos[busc];
-    printf(RED"Você está editando o produto de indice %d!"RESET,ID);
-
-    printf(YELLOW"Nome do Produto: ");
-    printf("\033[s");
-    printf("%s\n",p->nome);
-    printf("\033[u");
-    scanf("%[^\n]",p->nome);
-
-    printf(YELLOW"Preço do Produto: "RESET);
-    printf("\033[s");
-    printf("%.2f\n",p->preco);
-    printf("\033[u");
-    scanf("%f", &p->preco);
-
-    printf(YELLOW"Quantida disponível do Produto:"RESET);
-    printf("\033[s");
-    printf("%d\n",p->quantidade);
-    printf("\033[u");
-    scanf("%d",&p->quantidade);
-
-
-    escolha:
-    char opc;
-    printf(YELLOW"Deseja excluir outro produto? (s/n): "RESET);
-    scanf(" %c", &opc);
-    if (opc == 's' || opc == 'S') goto inicio;
 }
 
 
