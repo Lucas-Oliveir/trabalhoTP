@@ -2,31 +2,32 @@
 #include <windows.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <conio.h>
 
 void print(const char* s) {
     if (*s == '\0') return;
-    char* sexo = NULL;
+    char* str = NULL;
     int len = 0;
     
     const char* i = s;
     while (*i != '\0') {
         // realoca espaço (+2 = caractere novo + terminador)
-        char* tmp = realloc(sexo, len + 2);
+        char* tmp = realloc(str, len + 2);
         if (!tmp) {
-            free(sexo);
+            free(str);
             perror("realloc");
             return;
         }
-        sexo = tmp;
+        str = tmp;
 
-        sexo[len++] = *i++;
-        sexo[len] = '\0';
+        str[len++] = *i++;
+        str[len] = '\0';
 
-        printf("%c", sexo[len - 1]);
+        printf("%c", str[len - 1]);
         fflush(stdout);
         Sleep(40);
     }
-    free(sexo);
+    free(str);
 }
 
 typedef struct {
@@ -86,15 +87,21 @@ void cadastrarProduto(loja* loj) {
     printf(BLUE"==== Tela de Cadastro ====\n\n"RESET);
 
     inicio:
-
     loj->quant+=1;
     vetmanager(loj);
     prod aux;
     getchar();
-    printf(RED"Digite o nome do Produto: " RESET);
-    scanf("%[^\n]",aux.nome);
+    save:
     printf(RED"Digite o ID do produto: "RESET);
-    scanf("%d",&aux.id);
+    scanf("%d",&aux.id);    
+    if(busca(loj,aux.id)!=-1)
+    {
+        printf(RED"ID já cadastrado, digite outro ID válido!\n");
+        goto save;
+    }
+    printf(RED"Digite o nome do Produto: " RESET);
+    getchar();
+    scanf("%[^\n]",aux.nome);
     printf(RED"Digite o preço do produto: R$ "RESET);
     scanf("%f",&aux.preco);
     printf(RED"Digite a quantidade do produto: "RESET);
@@ -125,6 +132,10 @@ void listarProdutos(loja *loj, int e) {
     printf("+=====================================================================+\n"RESET);
     printf(BLUE"==== Lista de Produtos ====\n\n"RESET);
 
+    if(loj->quant==0)
+    {
+        printf(YELLOW"Nenhum produto cadastrado até o momento!\n\n");
+    }
     for(int i=0;i<loj->quant;i++)
     {
         if(e>loj->produtos[i].quantidade) continue;
@@ -162,7 +173,6 @@ void consultarProduto(loja* loj)
     }
     else
     {
-
         printf(YELLOW"Nome do Produto:"RESET" %s\n",loj->produtos[busc].nome);
         printf(YELLOW"ID do produto:"RESET" %d\n",loj->produtos[busc].id);
         printf(YELLOW"Preço do Produto:"RESET" %.2f\n",loj->produtos[busc].preco);
@@ -231,12 +241,15 @@ void editarProduto(loja *loj) {
         int ID;
         printf(RED "Digite o ID do produto a ser editado: " RESET);
         scanf("%d", &ID);
-        getchar(); // limpa o '\n' deixado pelo scanf
+        getchar(); // limpa o '\n' deixado pelo scandf
 
         int busc = busca(loj, ID);
-        if (busc == -1) {
+        if (busc == -1) 
+        {
             printf(RED "\nNão existe nenhum produto com este ID cadastrado!!\n" RESET);
-        } else {
+        } 
+        else 
+        {
             prod *p = &loj->produtos[busc];
             printf(RED "\nVocê está editando o produto de ID %d!\n\n" RESET, ID);
 
@@ -245,7 +258,8 @@ void editarProduto(loja *loj) {
             // Nome
             printf(YELLOW "Nome do Produto [%s]: " RESET, p->nome);
             fgets(buffer, sizeof(buffer), stdin);
-            if (buffer[0] != '\n') {
+            if (buffer[0] != '\n') 
+            {
                 buffer[strcspn(buffer, "\n")] = 0; // remove \n
                 strcpy(p->nome, buffer);
             }
@@ -253,14 +267,16 @@ void editarProduto(loja *loj) {
             // Preço
             printf(YELLOW "Preço do Produto [%.2f]: " RESET, p->preco);
             fgets(buffer, sizeof(buffer), stdin);
-            if (buffer[0] != '\n') {
+            if (buffer[0] != '\n') 
+            {
                 p->preco = atof(buffer);
             }
 
             // Quantidade
             printf(YELLOW "Quantidade disponível do Produto [%d]: " RESET, p->quantidade);
             fgets(buffer, sizeof(buffer), stdin);
-            if (buffer[0] != '\n') {
+            if (buffer[0] != '\n') 
+            {
                 p->quantidade = atoi(buffer);
             }
 
@@ -271,7 +287,8 @@ void editarProduto(loja *loj) {
         printf(YELLOW "Deseja editar outro produto? (s/n): " RESET);
         scanf(" %c", &opc);
         getchar(); // limpa o '\n'
-        if (opc != 's' && opc != 'S') {
+        if (opc != 's' && opc != 'S') 
+        {
             continuar = 0;
         }
     }
