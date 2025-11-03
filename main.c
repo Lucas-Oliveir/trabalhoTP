@@ -15,6 +15,7 @@ int main()
     int n=1;
     loj.quant=0;
     loj.vetsize=0;
+    vetmanager(&loj);
     while(n!=0)
     {
         system("CLS");
@@ -29,6 +30,7 @@ int main()
         printf("4. Listar todos os produtos\n");
         printf("5. Listar produtos disponíveis\n");
         printf("6. Consultar produto\n");
+        printf("0. Encerrar programa\n");
         print(RED"\n\nNúmero da ação desejada: "RESET);
         scanf("%d",&n);
         escolha(n,&loj);

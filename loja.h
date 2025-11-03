@@ -241,7 +241,7 @@ void editarProduto(loja *loj) {
         int ID;
         printf(RED "Digite o ID do produto a ser editado: " RESET);
         scanf("%d", &ID);
-        getchar(); // limpa o '\n' deixado pelo scandf
+        getchar();
 
         int busc = busca(loj, ID);
         if (busc == -1) 
@@ -251,33 +251,49 @@ void editarProduto(loja *loj) {
         else 
         {
             prod *p = &loj->produtos[busc];
-            printf(RED "\nVocê está editando o produto de ID %d!\n\n" RESET, ID);
-
             char buffer[100];
 
-            // Nome
-            printf(YELLOW "Nome do Produto [%s]: " RESET, p->nome);
-            fgets(buffer, sizeof(buffer), stdin);
-            if (buffer[0] != '\n') 
-            {
-                buffer[strcspn(buffer, "\n")] = 0; // remove \n
-                strcpy(p->nome, buffer);
-            }
+            int selecionado = 0; // 0 - nome, 1 - preco, 2 - quantidade, 3 - salvar e sair
 
-            // Preço
-            printf(YELLOW "Preço do Produto [%.2f]: " RESET, p->preco);
-            fgets(buffer, sizeof(buffer), stdin);
-            if (buffer[0] != '\n') 
-            {
-                p->preco = atof(buffer);
-            }
+            while (1) {
+                system("CLS");
+                printf(GREEN "+=====================================================================+\n");
+                printf("|" RED "  EDITANDO PRODUTO ID %d" GREEN "                                             |\n", p->id);
+                printf("+=====================================================================+\n\n" RESET);
 
-            // Quantidade
-            printf(YELLOW "Quantidade disponível do Produto [%d]: " RESET, p->quantidade);
-            fgets(buffer, sizeof(buffer), stdin);
-            if (buffer[0] != '\n') 
-            {
-                p->quantidade = atoi(buffer);
+                printf("%s Nome: %s\n",  selecionado == 0 ? YELLOW "> " RESET : "  ", p->nome);
+                printf("%s Preço: %.2f\n",selecionado == 1 ? YELLOW "> " RESET : "  ", p->preco);
+                printf("%s Quantidade: %d\n",selecionado == 2 ? YELLOW "> " RESET : "  ", p->quantidade);
+                printf("%s Concluir edição\n", selecionado == 3 ? YELLOW "> " RESET : "  ");
+
+                int tecla = getch();
+
+                if (tecla == SETA_CIMA) 
+                {
+                    if (selecionado > 0) selecionado--;
+                }
+                else if (tecla == SETA_BAIXO) 
+                {
+                    if (selecionado < 3) selecionado++;
+                }
+                else if (tecla == ENTER) 
+                {
+                    if (selecionado == 3) break;
+
+                    printf(YELLOW "\nDigite o novo valor (deixe vazio para não alterar): " RESET);
+                    fgets(buffer, sizeof(buffer), stdin);
+
+                    if (buffer[0] != '\n') 
+                    {
+                        buffer[strcspn(buffer, "\n")] = 0;
+                        if (selecionado == 0) 
+                            strcpy(p->nome, buffer);
+                        else if (selecionado == 1)
+                            p->preco = atof(buffer);
+                        else if (selecionado == 2)
+                            p->quantidade = atoi(buffer);
+                    }
+                }
             }
 
             printf(GREEN "\nProduto editado com sucesso!\n\n" RESET);
@@ -286,14 +302,11 @@ void editarProduto(loja *loj) {
         char opc;
         printf(YELLOW "Deseja editar outro produto? (s/n): " RESET);
         scanf(" %c", &opc);
-        getchar(); // limpa o '\n'
-        if (opc != 's' && opc != 'S') 
-        {
+        getchar();
+        if (opc != 's' && opc != 'S')
             continuar = 0;
-        }
     }
 }
-
 
 void escolha(int x,loja* loj)
 {

@@ -8,6 +8,9 @@
 #define YELLOW  "\033[33m"
 #define BLUE    "\033[34m"
 #define CLEAR   "\033[2J\033[H" // limpa tela e volta cursor ao início
+#define SETA_CIMA 72
+#define SETA_BAIXO 80
+#define ENTER 13
 
 #endif
 
