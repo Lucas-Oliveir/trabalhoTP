@@ -251,9 +251,9 @@ void editarProduto(loja *loj) {
         else 
         {
             prod *p = &loj->produtos[busc];
-            char buffer[100];
+            char buffer[50];
 
-            int selecionado = 0; // 0 - nome, 1 - preco, 2 - quantidade, 3 - salvar e sair
+            int selecionado = 0; 
 
             while (1) {
                 system("CLS");
